@@ -1,0 +1,1732 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>今天吃什么</title>
+    <style>
+      :root {
+        --bg: #f4f7ef;
+        --paper: #fffdf8;
+        --paper-2: #eef4f0;
+        --ink: #24342b;
+        --muted: #667269;
+        --green: #7ea36f;
+        --green-dark: #3f674f;
+        --coral: #e48a72;
+        --yellow: #f0c65a;
+        --blue: #6f99aa;
+        --line: rgba(63, 103, 79, 0.18);
+        --shadow: 0 18px 44px rgba(36, 52, 43, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 14% 8%, rgba(240, 198, 90, 0.2), transparent 28%),
+          radial-gradient(circle at 86% 18%, rgba(111, 153, 170, 0.18), transparent 30%),
+          linear-gradient(135deg, #f4f7ef, #fffdf8 52%, #eef4f0);
+        font-family:
+          "Microsoft YaHei UI",
+          "Noto Sans SC",
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+      }
+
+      button,
+      textarea,
+      input {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      button:disabled,
+      textarea:disabled {
+        cursor: not-allowed;
+        opacity: 0.58;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      .app-shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 54px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 16px;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--green-dark);
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin-bottom: 0;
+        font-size: clamp(40px, 7vw, 78px);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 0;
+        font-size: clamp(25px, 4vw, 40px);
+        letter-spacing: 0;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .primary-button,
+      .quiet-button,
+      .filter-chip,
+      .candidate-card {
+        min-height: 42px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          background 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .primary-button:hover,
+      .quiet-button:hover,
+      .filter-chip:hover,
+      .candidate-card:hover {
+        transform: translateY(-1px);
+      }
+
+      .primary-button {
+        min-height: 48px;
+        padding: 0 18px;
+        background: var(--yellow);
+        color: #2e3325;
+        font-weight: 900;
+        box-shadow: 0 12px 24px rgba(180, 130, 42, 0.18);
+        white-space: nowrap;
+      }
+
+      .primary-button.small,
+      .quiet-button.small {
+        min-height: 38px;
+        padding: 0 14px;
+        font-size: 14px;
+      }
+
+      .quiet-button {
+        min-height: 42px;
+        padding: 0 15px;
+        background: #fffdf8;
+        border-color: var(--line);
+        color: #4f6155;
+        font-weight: 850;
+        white-space: nowrap;
+      }
+
+      .filter-panel {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 253, 248, 0.76);
+        box-shadow: 0 10px 26px rgba(36, 52, 43, 0.08);
+      }
+
+      .filter-chip {
+        padding: 0 16px;
+        background: #edf4ed;
+        color: #4f6155;
+        font-weight: 850;
+      }
+
+      .filter-chip.active {
+        border-color: rgba(63, 103, 79, 0.36);
+        background: #cfe0c7;
+        color: #23342a;
+      }
+
+      .preview-card,
+      .tool-section {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 253, 248, 0.82);
+        box-shadow: var(--shadow);
+      }
+
+      .preview-card {
+        display: grid;
+        grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1fr);
+        gap: clamp(20px, 4vw, 42px);
+        align-items: center;
+        min-height: 424px;
+        margin-bottom: 20px;
+        padding: clamp(18px, 4vw, 36px);
+      }
+
+      .preview-media {
+        display: grid;
+        overflow: hidden;
+        aspect-ratio: 4 / 3;
+        place-items: center;
+        border-radius: 8px;
+        background:
+          linear-gradient(145deg, rgba(255, 253, 248, 0.52), rgba(225, 236, 230, 0.78)),
+          #e5efe6;
+      }
+
+      .preview-copy {
+        min-width: 0;
+      }
+
+      .type-pill,
+      .count-pill,
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .type-pill {
+        margin-bottom: 16px;
+        padding: 4px 11px;
+        background: #eadfca;
+        color: #49574c;
+      }
+
+      .preview-copy h2 {
+        max-width: 9em;
+        margin-bottom: 10px;
+        color: #23342a;
+        font-size: clamp(40px, 7vw, 74px);
+        line-height: 0.98;
+        overflow-wrap: anywhere;
+      }
+
+      .price {
+        margin-bottom: 14px;
+        color: var(--green-dark);
+        font-size: clamp(20px, 3vw, 30px);
+        font-weight: 950;
+      }
+
+      .description {
+        max-width: 34em;
+        margin-bottom: 22px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.8;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag,
+      .count-pill {
+        padding: 5px 10px;
+        background: #edf4ed;
+        color: #4c6253;
+      }
+
+      .tool-section {
+        margin-bottom: 20px;
+        padding: clamp(18px, 4vw, 28px);
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .wheel-grid {
+        display: grid;
+        grid-template-columns: minmax(310px, 0.92fr) minmax(0, 1fr);
+        gap: clamp(18px, 4vw, 34px);
+        align-items: center;
+      }
+
+      .wheel-stage {
+        position: relative;
+        display: grid;
+        min-height: 420px;
+        place-items: center;
+      }
+
+      .tea-wheel {
+        position: relative;
+        width: min(88vw, 390px);
+        aspect-ratio: 1;
+        border: 10px solid rgba(255, 253, 248, 0.9);
+        border-radius: 50%;
+        box-shadow:
+          inset 0 0 0 1px rgba(63, 103, 79, 0.14),
+          0 24px 58px rgba(36, 52, 43, 0.13);
+        transition: transform 880ms cubic-bezier(0.16, 0.84, 0.21, 1);
+      }
+
+      .tea-wheel::after {
+        content: "";
+        position: absolute;
+        inset: 18%;
+        border: 1px solid rgba(63, 103, 79, 0.16);
+        border-radius: 50%;
+        background: rgba(255, 253, 248, 0.52);
+        pointer-events: none;
+      }
+
+      .wheel-logo-layer {
+        position: absolute;
+        inset: 0;
+      }
+
+      .wheel-logo-slot {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 82px;
+        height: 58px;
+        transform:
+          rotate(var(--angle))
+          translate(128px)
+          rotate(calc(-1 * var(--angle)))
+          translate(-50%, -50%);
+        transform-origin: 0 0;
+        z-index: 2;
+      }
+
+      .wheel-center {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        z-index: 3;
+        display: grid;
+        width: 94px;
+        height: 94px;
+        place-items: center;
+        transform: translate(-50%, -50%);
+        border: 1px solid rgba(63, 103, 79, 0.18);
+        border-radius: 50%;
+        background: #fffdf8;
+        color: #526759;
+        font-size: 16px;
+        font-weight: 950;
+        text-align: center;
+        box-shadow: 0 12px 28px rgba(36, 52, 43, 0.12);
+      }
+
+      .wheel-pointer {
+        position: absolute;
+        left: calc(50% + min(44vw, 196px) - 24px);
+        top: 50%;
+        z-index: 5;
+        width: 82px;
+        height: 18px;
+        transform: translateY(-50%);
+        border-radius: 999px;
+        background: var(--green-dark);
+        box-shadow: 0 8px 18px rgba(36, 52, 43, 0.18);
+      }
+
+      .wheel-pointer::after {
+        content: "";
+        position: absolute;
+        right: -17px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-left: 22px solid var(--green-dark);
+      }
+
+      .detail-card {
+        min-height: 360px;
+        padding: clamp(18px, 4vw, 28px);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background:
+          linear-gradient(145deg, rgba(255, 253, 248, 0.98), rgba(238, 245, 236, 0.94)),
+          #fffdf8;
+      }
+
+      .detail-head,
+      .record-main {
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+
+      .detail-head {
+        align-items: center;
+        margin-bottom: 18px;
+      }
+
+      .detail-head span {
+        color: var(--green-dark);
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .detail-head h3 {
+        margin: 3px 0 0;
+        color: var(--ink);
+        font-size: clamp(28px, 4vw, 42px);
+        line-height: 1.04;
+      }
+
+      .detail-recommend {
+        margin-bottom: 18px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .price-table {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .price-table div {
+        display: grid;
+        gap: 6px;
+        padding: 12px;
+        border: 1px solid rgba(63, 103, 79, 0.14);
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .price-table span,
+      .detail-group h4 {
+        color: #667269;
+        font-size: 13px;
+      }
+
+      .price-table strong {
+        color: var(--green-dark);
+        font-size: 20px;
+      }
+
+      .detail-group {
+        margin-top: 14px;
+      }
+
+      .detail-group h4 {
+        margin: 0 0 8px;
+      }
+
+      .note-panel {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(63, 103, 79, 0.14);
+      }
+
+      .note-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .note-head span {
+        color: var(--ink);
+        font-size: 15px;
+        font-weight: 900;
+      }
+
+      .note-head small {
+        color: var(--muted);
+        font-size: 12px;
+        text-align: right;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 82px;
+        resize: vertical;
+        padding: 11px 12px;
+        border: 1px solid rgba(63, 103, 79, 0.2);
+        border-radius: 8px;
+        outline: none;
+        background: #ffffff;
+        color: var(--ink);
+        line-height: 1.55;
+      }
+
+      textarea:focus {
+        border-color: rgba(63, 103, 79, 0.52);
+        box-shadow: 0 0 0 3px rgba(126, 163, 111, 0.22);
+      }
+
+      .record-list,
+      .candidate-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .record-card,
+      .candidate-card {
+        border: 1px solid rgba(63, 103, 79, 0.16);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.84);
+      }
+
+      .record-card {
+        display: grid;
+        gap: 12px;
+        padding: 14px;
+        box-shadow: 0 8px 20px rgba(36, 52, 43, 0.06);
+      }
+
+      .record-title {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 7px;
+      }
+
+      .record-title strong {
+        color: var(--ink);
+        font-size: 19px;
+      }
+
+      .record-title span {
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .record-main p {
+        margin-bottom: 10px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .record-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .empty-record {
+        margin: 0;
+        padding: 18px;
+        border: 1px dashed rgba(63, 103, 79, 0.28);
+        border-radius: 8px;
+        background: rgba(255, 253, 248, 0.62);
+        color: var(--muted);
+      }
+
+      .candidate-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .candidate-card {
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1fr);
+        align-items: center;
+        gap: 12px;
+        min-height: 104px;
+        padding: 10px;
+        text-align: left;
+        box-shadow: 0 8px 20px rgba(36, 52, 43, 0.06);
+      }
+
+      .candidate-card.active {
+        border-color: rgba(63, 103, 79, 0.42);
+        background: #dfeade;
+      }
+
+      .candidate-copy {
+        min-width: 0;
+        display: grid;
+        gap: 7px;
+      }
+
+      .candidate-copy strong {
+        color: #283d31;
+        font-size: 18px;
+        line-height: 1.22;
+        overflow-wrap: anywhere;
+      }
+
+      .candidate-copy small {
+        color: var(--green-dark);
+        font-size: 14px;
+        font-weight: 850;
+      }
+
+      .dish-visual,
+      .brand-logo-card {
+        position: relative;
+        display: grid;
+        width: 100%;
+        height: 100%;
+        place-items: center;
+      }
+
+      .dish-visual.large,
+      .brand-logo-card.large {
+        min-height: 320px;
+        padding: 26px;
+      }
+
+      .dish-visual.small,
+      .brand-logo-card.small {
+        width: 92px;
+        height: 82px;
+        min-height: 82px;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #edf4ed;
+      }
+
+      .plate-illustration {
+        position: relative;
+        width: min(72%, 310px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 50% 50%, #fffdf8 0 44%, transparent 45%),
+          radial-gradient(circle at 50% 50%, rgba(232, 221, 200, 0.68) 0 63%, #fffdf8 64% 78%, transparent 79%);
+        box-shadow: 0 24px 56px rgba(36, 52, 43, 0.13);
+      }
+
+      .dish-visual.small .plate-illustration {
+        width: 68px;
+        box-shadow: none;
+      }
+
+      .food-shape,
+      .food-line,
+      .garnish,
+      .steam {
+        position: absolute;
+        display: block;
+      }
+
+      .food-main {
+        inset: 34% 24% 31%;
+        border-radius: 999px;
+        background: var(--tone);
+        box-shadow: inset 8px -9px 0 rgba(36, 52, 43, 0.12);
+      }
+
+      .food-side {
+        right: 28%;
+        bottom: 28%;
+        width: 28%;
+        height: 24%;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+
+      .food-line {
+        left: 28%;
+        right: 28%;
+        height: 4%;
+        border-radius: 999px;
+        background: rgba(36, 52, 43, 0.18);
+      }
+
+      .line-a {
+        top: 42%;
+        transform: rotate(-9deg);
+      }
+
+      .line-b {
+        top: 52%;
+        transform: rotate(8deg);
+      }
+
+      .garnish {
+        width: 22%;
+        height: 10%;
+        border-radius: 100% 0 100% 0;
+        background: #7ea36f;
+      }
+
+      .garnish-a {
+        top: 28%;
+        left: 28%;
+        transform: rotate(28deg);
+      }
+
+      .garnish-b {
+        right: 27%;
+        bottom: 31%;
+        transform: rotate(205deg);
+      }
+
+      .steam {
+        bottom: 74%;
+        width: 4%;
+        height: 22%;
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(63, 103, 79, 0), rgba(63, 103, 79, 0.32));
+      }
+
+      .steam-a {
+        left: 42%;
+        transform: rotate(-16deg);
+      }
+
+      .steam-b {
+        right: 42%;
+        transform: rotate(16deg);
+      }
+
+      .visual-caption {
+        position: absolute;
+        left: 50%;
+        bottom: 24px;
+        max-width: calc(100% - 36px);
+        transform: translateX(-50%);
+        padding: 7px 12px;
+        border: 1px solid rgba(63, 103, 79, 0.14);
+        border-radius: 999px;
+        background: rgba(255, 253, 248, 0.8);
+        color: #405246;
+        font-size: 14px;
+        font-weight: 850;
+        white-space: nowrap;
+      }
+
+      .dish-visual.small .visual-caption {
+        display: none;
+      }
+
+      .brand-logo-card {
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 50% 36%, color-mix(in srgb, var(--logo), white 84%), transparent 46%),
+          #fffdf8;
+        color: var(--logo);
+        box-shadow: inset 0 0 0 1px rgba(63, 103, 79, 0.12);
+      }
+
+      .brand-logo-card.large {
+        gap: 12px;
+      }
+
+      .brand-logo-card.small {
+        gap: 2px;
+        padding: 8px;
+      }
+
+      .brand-logo-card.wheel {
+        width: 82px;
+        height: 58px;
+        padding: 7px;
+        overflow: hidden;
+        border-radius: 8px;
+        background: rgba(255, 253, 248, 0.86);
+        box-shadow: inset 0 0 0 1px rgba(63, 103, 79, 0.1);
+      }
+
+      .brand-logo-card::before {
+        content: "";
+        position: absolute;
+        width: 46%;
+        aspect-ratio: 1;
+        border: 2px solid color-mix(in srgb, var(--logo), white 52%);
+        border-radius: 50%;
+        opacity: 0.52;
+      }
+
+      .logo-mark,
+      .logo-sub {
+        position: relative;
+        z-index: 1;
+        display: block;
+        text-align: center;
+      }
+
+      .logo-mark {
+        max-width: 8em;
+        color: var(--logo);
+        font-size: clamp(38px, 6vw, 72px);
+        font-weight: 950;
+        letter-spacing: 0;
+        line-height: 1.04;
+      }
+
+      .logo-sub {
+        color: color-mix(in srgb, var(--logo), #24342b 22%);
+        font-size: 14px;
+        font-weight: 950;
+        letter-spacing: 0.12em;
+      }
+
+      .brand-logo-card.small .logo-mark,
+      .brand-logo-card.wheel .logo-mark {
+        max-width: 100%;
+        font-size: 16px;
+        line-height: 1.08;
+        overflow-wrap: anywhere;
+      }
+
+      .brand-logo-card.small .logo-sub,
+      .brand-logo-card.wheel .logo-sub {
+        font-size: 8px;
+        letter-spacing: 0.05em;
+      }
+
+      .brand-logo-card.small::before,
+      .brand-logo-card.wheel::before {
+        width: 54%;
+      }
+
+      .hidden-input {
+        display: none;
+      }
+
+      @media (max-width: 980px) {
+        .preview-card,
+        .wheel-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .candidate-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .app-shell {
+          width: min(100% - 20px, 1180px);
+          padding-top: 20px;
+        }
+
+        .topbar,
+        .section-heading {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .button-row,
+        .primary-button,
+        .quiet-button {
+          width: 100%;
+        }
+
+        .preview-copy h2 {
+          font-size: clamp(34px, 14vw, 54px);
+        }
+
+        .wheel-stage {
+          min-height: 340px;
+        }
+
+        .tea-wheel {
+          width: min(88vw, 310px);
+        }
+
+        .wheel-logo-slot {
+          width: 68px;
+          height: 50px;
+          transform:
+            rotate(var(--angle))
+            translate(98px)
+            rotate(calc(-1 * var(--angle)))
+            translate(-50%, -50%);
+        }
+
+        .brand-logo-card.wheel {
+          width: 68px;
+          height: 50px;
+        }
+
+        .brand-logo-card.wheel .logo-mark {
+          font-size: 13px;
+        }
+
+        .wheel-center {
+          width: 78px;
+          height: 78px;
+          font-size: 14px;
+        }
+
+        .wheel-pointer {
+          left: calc(50% + min(44vw, 155px) - 24px);
+          width: 58px;
+        }
+
+        .price-table,
+        .record-main,
+        .detail-head,
+        .candidate-list {
+          grid-template-columns: 1fr;
+        }
+
+        .record-title {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Nordic Green Menu</p>
+          <h1>今天吃什么</h1>
+        </div>
+        <div class="button-row">
+          <button class="primary-button" id="randomButton" type="button">随机一个</button>
+        </div>
+      </header>
+
+      <section class="filter-panel" aria-label="筛选菜单">
+        <button class="filter-chip active" type="button" data-filter="all">全部</button>
+        <button class="filter-chip" type="button" data-filter="food">正餐</button>
+        <button class="filter-chip" type="button" data-filter="milkTea">奶茶</button>
+      </section>
+
+      <section class="preview-card" aria-live="polite">
+        <div class="preview-media" id="previewVisual"></div>
+        <div class="preview-copy">
+          <span class="type-pill" id="previewType"></span>
+          <h2 id="previewName"></h2>
+          <p class="price" id="previewPrice"></p>
+          <p class="description" id="previewDescription"></p>
+          <div class="tag-row" id="previewVariants"></div>
+        </div>
+      </section>
+
+      <section class="tool-section" aria-labelledby="wheelTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Milk Tea Wheel</p>
+            <h2 id="wheelTitle">奶茶转盘</h2>
+          </div>
+          <button class="primary-button small" id="spinButton" type="button">抽奶茶</button>
+        </div>
+
+        <div class="wheel-grid">
+          <div class="wheel-stage">
+            <div class="wheel-pointer" aria-hidden="true"></div>
+            <div class="tea-wheel" id="teaWheel">
+              <div class="wheel-logo-layer" id="wheelLogoLayer"></div>
+              <div class="wheel-center">喝什么</div>
+            </div>
+          </div>
+
+          <article class="detail-card" id="teaDetailCard"></article>
+        </div>
+      </section>
+
+      <section class="tool-section" aria-labelledby="recordTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Local Records</p>
+            <h2 id="recordTitle">奶茶记录</h2>
+          </div>
+          <div class="button-row">
+            <button class="quiet-button small" id="importButton" type="button">导入记录</button>
+            <button class="quiet-button small" id="exportButton" type="button">导出记录</button>
+            <span class="count-pill" id="recordCount">0 条</span>
+          </div>
+        </div>
+        <input class="hidden-input" id="importFile" type="file" accept="application/json" />
+        <div class="record-list" id="recordList"></div>
+      </section>
+
+      <section class="tool-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Menu Pool</p>
+            <h2>候选池</h2>
+          </div>
+          <span class="count-pill" id="candidateCount"></span>
+        </div>
+        <div class="candidate-list" id="candidateList"></div>
+      </section>
+    </main>
+
+    <script>
+      const menuItems = [
+        {
+          id: "qingcai-jirou-mian",
+          name: "青菜鸡肉面",
+          type: "food",
+          priceText: "12-15 元",
+          variants: ["小份 12 元", "大份 15 元"],
+          description: "青菜、鸡肉和清汤面组合，清爽但有饱腹感。",
+          tone: "#6f9a79",
+          accent: "#f2d38b",
+        },
+        {
+          id: "fanqie-niurou-mian",
+          name: "番茄牛肉面",
+          type: "food",
+          priceText: "13-17 元",
+          variants: ["小份 13 元", "大份 17 元"],
+          description: "番茄汤底酸甜开胃，牛肉负责把满足感撑起来。",
+          tone: "#d65f4b",
+          accent: "#f2b880",
+        },
+        {
+          id: "malatang",
+          name: "麻辣烫",
+          type: "food",
+          priceText: "16-28 元",
+          variants: ["自选称重", "可选微辣"],
+          description: "蔬菜、丸子、豆制品自由搭配，适合想掌控每一口的时候。",
+          tone: "#c9483c",
+          accent: "#f1cc73",
+        },
+        {
+          id: "sushi-set",
+          name: "寿司拼盘",
+          type: "food",
+          priceText: "22-36 元",
+          variants: ["单人拼盘", "双人分享"],
+          description: "清爽少油，适合晚上不想吃太重的时候。",
+          tone: "#5d8f9d",
+          accent: "#e5d6ba",
+        },
+        {
+          id: "huangmenji",
+          name: "黄焖鸡",
+          type: "food",
+          priceText: "12-15 元",
+          variants: ["小份 12 元", "大份 15 元"],
+          description: "汤汁拌饭很可靠，是不知道吃什么时的稳定答案。",
+          tone: "#d99b3d",
+          accent: "#8fb174",
+        },
+        {
+          id: "shaokao",
+          name: "烧烤",
+          type: "food",
+          priceText: "25-45 元",
+          variants: ["单人小串", "多人分享"],
+          description: "夜晚和烤串的适配度很高，适合奖励辛苦的一天。",
+          tone: "#8f4b37",
+          accent: "#f2b880",
+        },
+        {
+          id: "congee",
+          name: "砂锅粥",
+          type: "food",
+          priceText: "18-32 元",
+          variants: ["青菜粥", "海鲜粥"],
+          description: "暖胃、清淡、温柔，适合把一天收得安稳一点。",
+          tone: "#c8b88e",
+          accent: "#76a581",
+        },
+        {
+          id: "thai-curry",
+          name: "泰式咖喱饭",
+          type: "food",
+          priceText: "24-38 元",
+          variants: ["鸡肉咖喱", "牛肉咖喱"],
+          description: "香料感明显，适合想换个口味的时刻。",
+          tone: "#d69b33",
+          accent: "#7da56b",
+        },
+        {
+          id: "dumplings",
+          name: "水饺",
+          type: "food",
+          priceText: "10-13 元",
+          variants: ["小份 10 元", "大份 13 元"],
+          description: "简单、家常、上桌快，蘸醋以后更踏实。",
+          tone: "#d8d2c1",
+          accent: "#6c8f72",
+        },
+        {
+          id: "salad-bowl",
+          name: "牛油果鸡蛋沙拉碗",
+          type: "food",
+          priceText: "26-39 元",
+          variants: ["标准碗", "加鸡胸肉"],
+          description: "蔬菜、鸡蛋和牛油果组合，适合想清爽一点的晚上。",
+          tone: "#79a96b",
+          accent: "#f2d38b",
+        },
+        {
+          id: "mixue",
+          name: "蜜雪冰城",
+          type: "milkTea",
+          priceText: "4-12 元",
+          variants: ["柠檬水", "冰淇淋"],
+          description: "高性价比、门店多，适合快速获得一杯甜口快乐。",
+          logo: "蜜雪冰城",
+          logoSub: "MIXUE",
+          logoTone: "#d94f4f",
+          cupPrices: [
+            ["中杯", "6-9 元"],
+            ["大杯", "8-12 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖", "正常糖"],
+          ice: ["去冰", "少冰", "正常冰"],
+          recommend: "推荐：冰鲜柠檬水，五分糖，少冰。",
+        },
+        {
+          id: "heytea",
+          name: "喜茶",
+          type: "milkTea",
+          priceText: "18-32 元",
+          variants: ["芝士茶", "鲜果茶"],
+          description: "果茶和芝士茶辨识度高，适合给今天加一点仪式感。",
+          logo: "喜茶",
+          logoSub: "HEYTEA",
+          logoTone: "#222222",
+          cupPrices: [
+            ["标准杯", "18-25 元"],
+            ["加料/大杯", "24-32 元"],
+          ],
+          sweetness: ["无糖", "少糖", "标准糖"],
+          ice: ["去冰", "少冰", "正常冰"],
+          recommend: "推荐：多肉葡萄，少糖，少冰。",
+        },
+        {
+          id: "nayuki",
+          name: "奈雪的茶",
+          type: "milkTea",
+          priceText: "18-35 元",
+          variants: ["果茶", "茶饮+烘焙"],
+          description: "适合把奶茶和下午茶一起安排完整。",
+          logo: "奈雪的茶",
+          logoSub: "NAYUKI",
+          logoTone: "#79b7aa",
+          cupPrices: [
+            ["标准杯", "18-26 元"],
+            ["大杯/加料", "26-35 元"],
+          ],
+          sweetness: ["不另外加糖", "少糖", "正常糖"],
+          ice: ["去冰", "少冰", "正常冰"],
+          recommend: "推荐：霸气葡萄，少糖，正常冰。",
+        },
+        {
+          id: "chagee",
+          name: "霸王茶姬",
+          type: "milkTea",
+          priceText: "13-22 元",
+          variants: ["原叶鲜奶茶", "东方茶"],
+          description: "茶香更突出，适合想喝清爽鲜奶茶的时候。",
+          logo: "霸王茶姬",
+          logoSub: "CHAGEE",
+          logoTone: "#b38a50",
+          cupPrices: [
+            ["中杯", "13-17 元"],
+            ["大杯", "17-22 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖"],
+          ice: ["热", "去冰", "少冰", "正常冰"],
+          recommend: "推荐：伯牙绝弦，三分糖，少冰。",
+        },
+        {
+          id: "chabaidao",
+          name: "茶百道",
+          type: "milkTea",
+          priceText: "10-22 元",
+          variants: ["鲜果茶", "奶茶"],
+          description: "品类覆盖广，果茶和奶茶都有稳定选择。",
+          logo: "茶百道",
+          logoSub: "CHA PANDA",
+          logoTone: "#4f78a9",
+          cupPrices: [
+            ["中杯", "10-15 元"],
+            ["大杯", "15-22 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖", "正常糖"],
+          ice: ["去冰", "少冰", "正常冰"],
+          recommend: "推荐：豆乳玉麒麟，五分糖，少冰。",
+        },
+        {
+          id: "guming",
+          name: "古茗",
+          type: "milkTea",
+          priceText: "10-22 元",
+          variants: ["鲜果茶", "奶茶"],
+          description: "鲜果茶存在感强，适合天气热或者想来点清爽的时候。",
+          logo: "古茗",
+          logoSub: "GOOD ME",
+          logoTone: "#c96a5f",
+          cupPrices: [
+            ["中杯", "10-15 元"],
+            ["大杯", "15-22 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖"],
+          ice: ["去冰", "少冰", "正常冰"],
+          recommend: "推荐：杨枝甘露轻乳茶，五分糖，少冰。",
+        },
+        {
+          id: "auntea-jenny",
+          name: "沪上阿姨",
+          type: "milkTea",
+          priceText: "10-22 元",
+          variants: ["鲜果茶", "血糯米奶茶"],
+          description: "小料型饮品表现突出，适合把饮料当半份甜品。",
+          logo: "沪上阿姨",
+          logoSub: "AUNTEA JENNY",
+          logoTone: "#8e4e4c",
+          cupPrices: [
+            ["中杯", "10-15 元"],
+            ["大杯", "15-22 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖", "正常糖"],
+          ice: ["热", "去冰", "少冰", "正常冰"],
+          recommend: "推荐：血糯米奶茶，五分糖，少冰。",
+        },
+        {
+          id: "shuyi",
+          name: "书亦烧仙草",
+          type: "milkTea",
+          priceText: "8-18 元",
+          variants: ["烧仙草", "甜品茶饮"],
+          description: "小料丰富，甜品感很足，适合治愈型加餐。",
+          logo: "书亦烧仙草",
+          logoSub: "SHUYI",
+          logoTone: "#7a574a",
+          cupPrices: [
+            ["中杯", "8-13 元"],
+            ["大杯", "13-18 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖"],
+          ice: ["热", "去冰", "少冰", "正常冰"],
+          recommend: "推荐：书亦烧仙草，五分糖，少冰。",
+        },
+        {
+          id: "chayan",
+          name: "茶颜悦色",
+          type: "milkTea",
+          priceText: "12-22 元",
+          variants: ["新中式", "地域特色"],
+          description: "新中式表达很有记忆点，适合想喝点特别的时候。",
+          logo: "茶颜悦色",
+          logoSub: "SEXY TEA",
+          logoTone: "#b65d54",
+          cupPrices: [
+            ["标准杯", "12-16 元"],
+            ["加料/大杯", "16-22 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖"],
+          ice: ["热", "去冰", "少冰", "正常冰"],
+          recommend: "推荐：幽兰拿铁，三分糖，少冰。",
+        },
+        {
+          id: "yidiandian",
+          name: "一点点",
+          type: "milkTea",
+          priceText: "10-22 元",
+          variants: ["台式奶茶", "自由加料"],
+          description: "经典台式奶茶路线，适合想自由加料的时候。",
+          logo: "一点点",
+          logoSub: "1 DIAN DIAN",
+          logoTone: "#3f5146",
+          cupPrices: [
+            ["中杯", "10-15 元"],
+            ["大杯", "15-22 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖", "正常糖"],
+          ice: ["热", "去冰", "少冰", "正常冰"],
+          recommend: "推荐：四季奶青，五分糖，少冰，加珍珠。",
+        },
+        {
+          id: "coco",
+          name: "CoCo 都可",
+          type: "milkTea",
+          priceText: "9-22 元",
+          variants: ["珍珠奶茶", "奶盖茶"],
+          description: "珍珠奶茶和奶盖茶选择多，是熟悉的安全牌。",
+          logo: "CoCo 都可",
+          logoSub: "FRESH TEA",
+          logoTone: "#d98a4f",
+          cupPrices: [
+            ["中杯", "9-15 元"],
+            ["大杯", "15-22 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖", "正常糖"],
+          ice: ["热", "去冰", "少冰", "正常冰"],
+          recommend: "推荐：珍珠奶茶，五分糖，少冰。",
+        },
+        {
+          id: "tianlala",
+          name: "甜啦啦",
+          type: "milkTea",
+          priceText: "5-12 元",
+          variants: ["平价茶饮", "冰淇淋"],
+          description: "价格友好，适合今天只想快速获得一杯快乐。",
+          logo: "甜啦啦",
+          logoSub: "TIANLALA",
+          logoTone: "#d96884",
+          cupPrices: [
+            ["中杯", "5-8 元"],
+            ["大杯", "8-12 元"],
+          ],
+          sweetness: ["无糖", "三分糖", "五分糖", "七分糖", "正常糖"],
+          ice: ["去冰", "少冰", "正常冰"],
+          recommend: "推荐：柠檬茶，五分糖，正常冰。",
+        },
+      ];
+
+      const storageKey = "what-to-eat-static-records-v1";
+      const milkTeaItems = menuItems.filter((item) => item.type === "milkTea");
+      const wheelColors = [
+        "#d9e7d3",
+        "#e8dcc7",
+        "#d4e2df",
+        "#ead9d1",
+        "#d9dfca",
+        "#e3d7c5",
+        "#cedfd6",
+        "#e7d9d7",
+        "#d7e5ce",
+        "#ded7c7",
+        "#d0ddd9",
+        "#e7dfcf",
+      ];
+
+      const previewVisual = document.querySelector("#previewVisual");
+      const previewType = document.querySelector("#previewType");
+      const previewName = document.querySelector("#previewName");
+      const previewPrice = document.querySelector("#previewPrice");
+      const previewDescription = document.querySelector("#previewDescription");
+      const previewVariants = document.querySelector("#previewVariants");
+      const candidateList = document.querySelector("#candidateList");
+      const candidateCount = document.querySelector("#candidateCount");
+      const randomButton = document.querySelector("#randomButton");
+      const spinButton = document.querySelector("#spinButton");
+      const teaWheel = document.querySelector("#teaWheel");
+      const wheelLogoLayer = document.querySelector("#wheelLogoLayer");
+      const teaDetailCard = document.querySelector("#teaDetailCard");
+      const recordList = document.querySelector("#recordList");
+      const recordCount = document.querySelector("#recordCount");
+      const exportButton = document.querySelector("#exportButton");
+      const importButton = document.querySelector("#importButton");
+      const importFile = document.querySelector("#importFile");
+      const filterButtons = [...document.querySelectorAll(".filter-chip")];
+
+      let activeFilter = "all";
+      let selectedItem = menuItems[0];
+      let currentRecordId = null;
+      let wheelRotation = 0;
+      let records = loadRecords();
+
+      function loadRecords() {
+        try {
+          const saved = window.localStorage.getItem(storageKey);
+          const parsed = saved ? JSON.parse(saved) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveRecords() {
+        window.localStorage.setItem(storageKey, JSON.stringify(records));
+      }
+
+      function getVisibleItems() {
+        return activeFilter === "all"
+          ? menuItems
+          : menuItems.filter((item) => item.type === activeFilter);
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function dishVisual(item, size = "large") {
+        return `
+          <div class="dish-visual ${size}" style="--tone:${item.tone}; --accent:${item.accent}">
+            <div class="plate-illustration">
+              <span class="steam steam-a"></span>
+              <span class="steam steam-b"></span>
+              <span class="garnish garnish-a"></span>
+              <span class="garnish garnish-b"></span>
+              <span class="food-shape food-main"></span>
+              <span class="food-shape food-side"></span>
+              <span class="food-line line-a"></span>
+              <span class="food-line line-b"></span>
+            </div>
+            <span class="visual-caption">${escapeHtml(item.name)}</span>
+          </div>
+        `;
+      }
+
+      function brandLogo(item, size = "large") {
+        return `
+          <div class="brand-logo-card ${size}" style="--logo:${item.logoTone}">
+            <span class="logo-mark">${escapeHtml(item.logo)}</span>
+            <span class="logo-sub">${escapeHtml(item.logoSub)}</span>
+          </div>
+        `;
+      }
+
+      function visualFor(item, size = "large") {
+        return item.type === "milkTea" ? brandLogo(item, size) : dishVisual(item, size);
+      }
+
+      function renderPreview(item) {
+        selectedItem = item;
+        previewVisual.innerHTML = visualFor(item, "large");
+        previewType.textContent = item.type === "food" ? "正餐" : "奶茶";
+        previewName.textContent = item.name;
+        previewPrice.textContent = item.priceText;
+        previewDescription.textContent = item.description;
+        previewVariants.innerHTML = item.variants
+          .map((variant) => `<span class="tag">${escapeHtml(variant)}</span>`)
+          .join("");
+
+        if (item.type === "milkTea") {
+          renderTeaDetail(item, getRecord(currentRecordId));
+        }
+      }
+
+      function renderCandidates() {
+        const items = getVisibleItems();
+        candidateCount.textContent = `${items.length} 项`;
+        candidateList.innerHTML = items
+          .map(
+            (item) => `
+              <button class="candidate-card ${selectedItem.id === item.id ? "active" : ""}" type="button" data-id="${item.id}">
+                ${visualFor(item, "small")}
+                <span class="candidate-copy">
+                  <strong>${escapeHtml(item.name)}</strong>
+                  <small>${escapeHtml(item.priceText)}</small>
+                </span>
+              </button>
+            `,
+          )
+          .join("");
+
+        candidateList.querySelectorAll(".candidate-card").forEach((card) => {
+          card.addEventListener("click", () => {
+            const next = menuItems.find((item) => item.id === card.dataset.id);
+            if (!next) return;
+            renderPreview(next);
+            renderCandidates();
+          });
+        });
+      }
+
+      function renderWheel() {
+        const segment = 360 / milkTeaItems.length;
+        const gradient = milkTeaItems
+          .map((_, index) => {
+            const start = index * segment;
+            const end = (index + 1) * segment;
+            return `${wheelColors[index]} ${start}deg ${end}deg`;
+          })
+          .join(", ");
+
+        teaWheel.style.background = `conic-gradient(from ${segment / -2}deg, ${gradient})`;
+        wheelLogoLayer.innerHTML = milkTeaItems
+          .map((item, index) => {
+            const angle = index * segment;
+            return `
+              <div class="wheel-logo-slot" style="--angle:${angle}deg">
+                ${brandLogo(item, "wheel")}
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function getRecord(id) {
+        if (!id) return null;
+        return records.find((record) => record.id === id) ?? null;
+      }
+
+      function createSpinRecord(item) {
+        const record = {
+          id: Date.now(),
+          brandId: item.id,
+          brandName: item.name,
+          priceText: item.priceText,
+          cupPrices: item.cupPrices,
+          sweetness: item.sweetness,
+          ice: item.ice,
+          recommend: item.recommend,
+          note: "",
+          createdAt: new Date().toISOString(),
+        };
+        records = [record, ...records];
+        currentRecordId = record.id;
+        saveRecords();
+        renderRecords();
+        return record.id;
+      }
+
+      function updateRecordNote(id, note) {
+        records = records.map((record) =>
+          record.id === id ? { ...record, note } : record,
+        );
+        saveRecords();
+        renderRecords();
+      }
+
+      function deleteRecord(id) {
+        records = records.filter((record) => record.id !== id);
+        if (currentRecordId === id) {
+          currentRecordId = null;
+        }
+        saveRecords();
+        renderRecords();
+        if (selectedItem.type === "milkTea") {
+          renderTeaDetail(selectedItem, getRecord(currentRecordId));
+        }
+      }
+
+      function renderTeaDetail(item, record = null) {
+        const note = record?.note ?? "";
+        const recordTip = record
+          ? `已记录于 ${new Date(record.createdAt).toLocaleString("zh-CN")}`
+          : "抽中后会生成一条本地记录";
+
+        teaDetailCard.innerHTML = `
+          <div class="detail-head">
+            ${brandLogo(item, "small")}
+            <div>
+              <span>${record ? "抽中奶茶" : "奶茶资料"}</span>
+              <h3>${escapeHtml(item.name)}</h3>
+            </div>
+          </div>
+          <p class="detail-recommend">${escapeHtml(item.recommend)}</p>
+          <div class="price-table">
+            ${item.cupPrices
+              .map(
+                ([size, price]) => `
+                  <div>
+                    <span>${escapeHtml(size)}</span>
+                    <strong>${escapeHtml(price)}</strong>
+                  </div>
+                `,
+              )
+              .join("")}
+          </div>
+          <div class="detail-group">
+            <h4>甜度</h4>
+            <div class="tag-row">${item.sweetness.map((value) => `<span class="tag">${escapeHtml(value)}</span>`).join("")}</div>
+          </div>
+          <div class="detail-group">
+            <h4>冰量</h4>
+            <div class="tag-row">${item.ice.map((value) => `<span class="tag">${escapeHtml(value)}</span>`).join("")}</div>
+          </div>
+          <div class="note-panel">
+            <div class="note-head">
+              <span>备注</span>
+              <small>${escapeHtml(recordTip)}</small>
+            </div>
+            <textarea id="currentNote" placeholder="比如：少冰，不要加小料" ${record ? "" : "disabled"}>${escapeHtml(note)}</textarea>
+            <button class="primary-button small" id="saveCurrentNote" type="button" ${record ? "" : "disabled"}>保存备注</button>
+          </div>
+        `;
+
+        const saveButton = teaDetailCard.querySelector("#saveCurrentNote");
+        const textarea = teaDetailCard.querySelector("#currentNote");
+        saveButton?.addEventListener("click", () => {
+          if (!currentRecordId) return;
+          updateRecordNote(currentRecordId, textarea.value.trim());
+          renderTeaDetail(item, getRecord(currentRecordId));
+        });
+      }
+
+      function renderRecords() {
+        recordCount.textContent = `${records.length} 条`;
+
+        if (records.length === 0) {
+          recordList.innerHTML = '<p class="empty-record">还没有记录。</p>';
+          return;
+        }
+
+        recordList.innerHTML = records
+          .map((record) => {
+            const item = milkTeaItems.find((tea) => tea.id === record.brandId) ?? milkTeaItems[0];
+            const time = new Date(record.createdAt).toLocaleString("zh-CN");
+            return `
+              <article class="record-card" data-id="${record.id}">
+                <div class="record-main">
+                  ${brandLogo(item, "small")}
+                  <div>
+                    <div class="record-title">
+                      <strong>${escapeHtml(record.brandName)}</strong>
+                      <span>${escapeHtml(time)}</span>
+                    </div>
+                    <p>${escapeHtml(record.recommend)}</p>
+                    <div class="tag-row">
+                      <span class="tag">${escapeHtml(record.priceText)}</span>
+                      ${record.cupPrices.map(([size, price]) => `<span class="tag">${escapeHtml(size)} ${escapeHtml(price)}</span>`).join("")}
+                    </div>
+                  </div>
+                </div>
+                <textarea class="record-note" placeholder="给这次抽中的奶茶写点备注">${escapeHtml(record.note)}</textarea>
+                <div class="record-actions">
+                  <button class="primary-button small save-record" type="button">保存</button>
+                  <button class="quiet-button small delete-record" type="button">删除</button>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+
+        recordList.querySelectorAll(".record-card").forEach((card) => {
+          const id = Number(card.dataset.id);
+          card.querySelector(".save-record").addEventListener("click", () => {
+            const note = card.querySelector(".record-note").value.trim();
+            updateRecordNote(id, note);
+            if (currentRecordId === id && selectedItem.type === "milkTea") {
+              renderTeaDetail(selectedItem, getRecord(currentRecordId));
+            }
+          });
+          card.querySelector(".delete-record").addEventListener("click", () => {
+            deleteRecord(id);
+          });
+        });
+      }
+
+      function pickRandom() {
+        const items = getVisibleItems();
+        const next = items[Math.floor(Math.random() * items.length)];
+        renderPreview(next);
+        renderCandidates();
+      }
+
+      function spinWheel() {
+        const segment = 360 / milkTeaItems.length;
+        const index = Math.floor(Math.random() * milkTeaItems.length);
+        const target = 360 - index * segment;
+        wheelRotation += 1440 + target - (wheelRotation % 360);
+        teaWheel.style.transform = `rotate(${wheelRotation}deg)`;
+
+        window.setTimeout(() => {
+          const item = milkTeaItems[index];
+          const recordId = createSpinRecord(item);
+          renderPreview(item);
+          renderTeaDetail(item, getRecord(recordId));
+          renderCandidates();
+        }, 880);
+      }
+
+      function exportRecords() {
+        const blob = new Blob([JSON.stringify(records, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        const date = new Date().toISOString().slice(0, 10);
+        link.href = url;
+        link.download = `milk-tea-records-${date}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function importRecords(file) {
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          try {
+            const parsed = JSON.parse(String(reader.result));
+            if (!Array.isArray(parsed)) return;
+            records = parsed
+              .filter((record) => record && record.id && record.brandId)
+              .map((record) => ({
+                id: Number(record.id),
+                brandId: String(record.brandId),
+                brandName: String(record.brandName ?? ""),
+                priceText: String(record.priceText ?? ""),
+                cupPrices: Array.isArray(record.cupPrices) ? record.cupPrices : [],
+                sweetness: Array.isArray(record.sweetness) ? record.sweetness : [],
+                ice: Array.isArray(record.ice) ? record.ice : [],
+                recommend: String(record.recommend ?? ""),
+                note: String(record.note ?? ""),
+                createdAt: String(record.createdAt ?? new Date().toISOString()),
+              }));
+            saveRecords();
+            renderRecords();
+          } catch {
+            window.alert("导入失败，请选择有效的 JSON 记录文件。");
+          }
+        });
+        reader.readAsText(file);
+      }
+
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activeFilter = button.dataset.filter;
+          filterButtons.forEach((item) => item.classList.toggle("active", item === button));
+          const items = getVisibleItems();
+          renderPreview(items[0]);
+          renderCandidates();
+        });
+      });
+
+      randomButton.addEventListener("click", pickRandom);
+      spinButton.addEventListener("click", spinWheel);
+      exportButton.addEventListener("click", exportRecords);
+      importButton.addEventListener("click", () => importFile.click());
+      importFile.addEventListener("change", () => {
+        const file = importFile.files?.[0];
+        if (file) importRecords(file);
+        importFile.value = "";
+      });
+
+      renderWheel();
+      renderPreview(selectedItem);
+      renderTeaDetail(milkTeaItems[0]);
+      renderCandidates();
+      renderRecords();
+    </script>
+  </body>
+</html>
