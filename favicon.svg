@@ -1,0 +1,19 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="食物网站 favicon">
+  <defs>
+    <linearGradient id="bowl" x1="11" y1="43" x2="53" y2="43" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F05A42"/>
+      <stop offset="1" stop-color="#FFB347"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="36" y1="12" x2="54" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#37A86B"/>
+      <stop offset="1" stop-color="#9ACD32"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#FFF8EF"/>
+  <circle cx="32" cy="33" r="23" fill="#FFFFFF"/>
+  <path d="M15 37C15 33.134 18.134 30 22 30H42C45.866 30 49 33.134 49 37V39H15V37Z" fill="#2F2A25"/>
+  <path d="M11 40H53C52.017 50.656 43.048 59 32 59C20.952 59 11.983 50.656 11 40Z" fill="url(#bowl)"/>
+  <path d="M25 25C20 20 24 15 29 10C34 17 32 23 27 27" stroke="#F05A42" stroke-width="4" stroke-linecap="round"/>
+  <path d="M35 25C31 19 36 14 41 9C46 17 44 24 38 27" stroke="#FFB347" stroke-width="4" stroke-linecap="round"/>
+  <path d="M40 23C42 14 51 12 56 15C53 24 47 29 40 23Z" fill="url(#leaf)"/>
+</svg>

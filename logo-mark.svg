@@ -1,0 +1,26 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">食物网站图形标识</title>
+  <desc id="desc">A bowl, leaf, and rising steam icon for a food website.</desc>
+  <defs>
+    <linearGradient id="bowlGradient" x1="34" y1="124" x2="146" y2="124" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F05A42"/>
+      <stop offset="1" stop-color="#FFB347"/>
+    </linearGradient>
+    <linearGradient id="leafGradient" x1="92" y1="35" x2="134" y2="81" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#37A86B"/>
+      <stop offset="1" stop-color="#9ACD32"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="#FFF8EF"/>
+  <circle cx="90" cy="88" r="64" fill="#FFFFFF"/>
+  <path d="M43 104C43 93.507 51.507 85 62 85H118C128.493 85 137 93.507 137 104V108H43V104Z" fill="#2F2A25"/>
+  <path d="M34 109H146C143.548 137.227 119.861 159 90 159C60.139 159 36.452 137.227 34 109Z" fill="url(#bowlGradient)"/>
+  <path d="M55 126C69.82 139.046 108.48 140.1 125 126" stroke="#FFE7C7" stroke-width="8" stroke-linecap="round"/>
+  <path d="M68 70C57 58 67 44 79 32C90 49 87 63 75 74" stroke="#F05A42" stroke-width="9" stroke-linecap="round"/>
+  <path d="M96 70C86 56 97 42 111 29C123 49 117 65 104 76" stroke="#FFB347" stroke-width="9" stroke-linecap="round"/>
+  <path d="M110 62C114 40 136 37 150 45C143 65 127 77 110 62Z" fill="url(#leafGradient)"/>
+  <path d="M115 60C124 57 133 53 143 46" stroke="#E9FFE0" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="61" cy="101" r="5" fill="#FFF2D8"/>
+  <circle cx="87" cy="97" r="4" fill="#FFF2D8"/>
+  <circle cx="114" cy="101" r="5" fill="#FFF2D8"/>
+</svg>
