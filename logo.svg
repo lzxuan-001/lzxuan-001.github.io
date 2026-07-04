@@ -1,0 +1,43 @@
+<svg width="720" height="180" viewBox="0 0 720 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">食物网站 Logo</title>
+  <desc id="desc">A warm food website logo with a bowl, leaf, steam, and Chinese wordmark.</desc>
+  <defs>
+    <linearGradient id="bowlGradient" x1="49" y1="124" x2="161" y2="124" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F05A42"/>
+      <stop offset="1" stop-color="#FFB347"/>
+    </linearGradient>
+    <linearGradient id="leafGradient" x1="107" y1="35" x2="149" y2="81" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#37A86B"/>
+      <stop offset="1" stop-color="#9ACD32"/>
+    </linearGradient>
+    <filter id="softShadow" x="17" y="8" width="176" height="160" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="8"/>
+      <feGaussianBlur stdDeviation="10"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.22 0 0 0 0 0.12 0 0 0 0 0.07 0 0 0 0.18 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+  </defs>
+  <rect width="720" height="180" rx="36" fill="#FFF8EF"/>
+  <g filter="url(#softShadow)">
+    <circle cx="105" cy="88" r="64" fill="#FFFFFF"/>
+    <path d="M58 104C58 93.507 66.507 85 77 85H133C143.493 85 152 93.507 152 104V108H58V104Z" fill="#2F2A25"/>
+    <path d="M49 109H161C158.548 137.227 134.861 159 105 159C75.139 159 51.452 137.227 49 109Z" fill="url(#bowlGradient)"/>
+    <path d="M70 126C84.82 139.046 123.48 140.1 140 126" stroke="#FFE7C7" stroke-width="8" stroke-linecap="round"/>
+    <path d="M83 70C72 58 82 44 94 32C105 49 102 63 90 74" stroke="#F05A42" stroke-width="9" stroke-linecap="round"/>
+    <path d="M111 70C101 56 112 42 126 29C138 49 132 65 119 76" stroke="#FFB347" stroke-width="9" stroke-linecap="round"/>
+    <path d="M125 62C129 40 151 37 165 45C158 65 142 77 125 62Z" fill="url(#leafGradient)"/>
+    <path d="M130 60C139 57 148 53 158 46" stroke="#E9FFE0" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="76" cy="101" r="5" fill="#FFF2D8"/>
+    <circle cx="102" cy="97" r="4" fill="#FFF2D8"/>
+    <circle cx="129" cy="101" r="5" fill="#FFF2D8"/>
+  </g>
+  <g>
+    <text x="214" y="91" fill="#2F2A25" font-family="'Microsoft YaHei UI', 'Noto Sans SC', sans-serif" font-size="54" font-weight="800" letter-spacing="0">食物网站</text>
+    <text x="217" y="126" fill="#6C6259" font-family="'Microsoft YaHei UI', 'Noto Sans SC', sans-serif" font-size="20" font-weight="500" letter-spacing="4">FRESH FOOD DAILY</text>
+    <path d="M216 139H424" stroke="#F05A42" stroke-width="5" stroke-linecap="round"/>
+    <path d="M440 139H480" stroke="#37A86B" stroke-width="5" stroke-linecap="round"/>
+  </g>
+</svg>
